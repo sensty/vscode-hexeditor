@@ -93,9 +93,11 @@
 }
 
 .data-display {
-	position: sticky;
-	inset: 0;
-	height: 0px;
+        position: sticky;
+        inset: 0;
+        height: 0px;
+        overflow-x: auto;
+        overflow-y: hidden;
 }
 
 .data-inspector-wrap {

@@ -18,6 +18,7 @@ import * as select from "./state";
 import { strings } from "./strings";
 import { throwOnUndefinedAccessInDev } from "./util";
 import { VsProgressIndicator } from "./vscodeUi";
+import { HorizontalScrollContainer } from "./horizontalScrollContainer";
 
 const style = throwOnUndefinedAccessInDev(_style);
 
@@ -76,8 +77,10 @@ const Editor: React.FC = () => {
 			>
 				<FindWidget />
 				<SettingsGear />
-				<DataHeader />
-				<ScrollContainer />
+				<HorizontalScrollContainer>
+					<DataHeader />
+					<ScrollContainer />
+				</HorizontalScrollContainer>
 				<ReadonlyWarning />
 				{inspectorLocation === InspectorLocation.Hover && <DataInspectorHover />}
 			</div>
