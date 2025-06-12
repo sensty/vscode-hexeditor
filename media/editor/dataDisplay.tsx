@@ -68,6 +68,8 @@ const Address: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ children, ...
 
 export const DataHeader: React.FC = () => {
 	const editorSettings = useRecoilValue(select.editorSettings);
+	const visibleColumns = useRecoilValue(select.visibleColumns);
+	const columnOffset = useRecoilValue(select.columnOffset);
 	const inspectorLocation = useRecoilValue(select.dataInspectorLocation);
 
 	return (
@@ -76,8 +78,8 @@ export const DataHeader: React.FC = () => {
 				<Address>00000000</Address>
 			</DataCellGroup>
 			<DataCellGroup>
-				{new Array(editorSettings.columnWidth).fill(0).map((_v, i) => (
-					<Byte key={i} value={i & 0xff} />
+				{new Array(visibleColumns).fill(0).map((_v, i) => (
+					<Byte key={i} value={(i + columnOffset) & 0xff} />
 				))}
 			</DataCellGroup>
 			{editorSettings.showDecodedText && (
@@ -85,7 +87,7 @@ export const DataHeader: React.FC = () => {
 				// Flex-shrink prevents the data inspector overlapping on narrow screens
 				<DataCellGroup
 					style={{
-						width: `calc(var(--cell-size) * ${editorSettings.columnWidth * textCellWidth})`,
+						width: `calc(var(--cell-size) * ${visibleColumns * textCellWidth})`,
 						flexShrink: 0,
 					}}
 				>
@@ -329,7 +331,11 @@ const DataRows: React.FC = () => {
 
 	const rows: React.ReactChild[] = [];
 	// i === startPageStartsAt so that we always show at least 1 page, allowing users to append to empty files (#534)
-	for (let i = startPageStartsAt; i <= endPageStartsAt && (i === startPageStartsAt || i < fileSize); i += dataPageSize) {
+	for (
+		let i = startPageStartsAt;
+		i <= endPageStartsAt && (i === startPageStartsAt || i < fileSize);
+		i += dataPageSize
+	) {
 		rows.push(
 			<DataPage
 				key={i}
@@ -355,7 +361,9 @@ const LoadingDataRow: React.FC<{ width: number; showDecodedText: boolean }> = ({
 }) => {
 	const cells: React.ReactNode[] = [];
 	const text = strings.loadingUpper;
-	for (let i = 0; i < width; i++) {
+	const visibleColumns = useRecoilValue(select.visibleColumns);
+	const columnOffset = useRecoilValue(select.columnOffset);
+	for (let i = columnOffset; i < columnOffset + visibleColumns && i < width; i++) {
 		const str = (text[i * 2] || ".") + (text[i * 2 + 1] || ".");
 		cells.push(
 			<span className={dataCellCls} aria-hidden style={{ opacity: 0.5 }} key={i}>
@@ -703,12 +711,16 @@ const DataRowContents: React.FC<{
 		memoValue += "," + byte;
 	}
 
+	const visibleColumns = useRecoilValue(select.visibleColumns);
+	const columnOffset = useRecoilValue(select.columnOffset);
 	const { bytes, chars } = useMemo(() => {
 		const bytes: React.ReactChild[] = [];
 		const chars: React.ReactChild[] = [];
 		const searcher = binarySearch<HexDecorator>(d => d.range.end);
 		let j = searcher(offset, decorators);
-		for (let i = 0; i < width; i++) {
+		const start = columnOffset;
+		const end = Math.min(width, columnOffset + visibleColumns);
+		for (let i = start; i < end; i++) {
 			const boffset = offset + i;
 			const value = rawBytes[i];
 			let decorator: HexDecorator | undefined = undefined;

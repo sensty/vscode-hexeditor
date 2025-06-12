@@ -1,0 +1,9 @@
+.wrapper {
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-grow: 1;
+    flex-basis: 0;
+}
+.inner {
+    width: max-content;
+}

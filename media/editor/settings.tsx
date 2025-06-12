@@ -59,7 +59,7 @@ const ColumnWidth: React.FC = () => {
 	const updateColumnWidth = (evt: React.ChangeEvent<HTMLInputElement>) => {
 		updateSettings(s => {
 			const colWidth = isNaN(evt.target.valueAsNumber) ? 1 : Math.max(evt.target.valueAsNumber, 1);
-			const newSetting = { ...s, columnWidth: Math.min(colWidth, 32) };
+			const newSetting = { ...s, columnWidth: Math.min(colWidth, 512) };
 			return newSetting;
 		});
 	};
@@ -72,7 +72,7 @@ const ColumnWidth: React.FC = () => {
 				id="column-width"
 				value={settings.columnWidth}
 				min={1}
-				max={32}
+				max={512}
 				style={{ width: 40 }}
 				onChange={updateColumnWidth}
 			/>

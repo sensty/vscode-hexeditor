@@ -200,6 +200,16 @@ export const showDecodedText = selector({
 	get: ({ get }) => get(editorSettings).showDecodedText,
 });
 
+export const visibleColumns = selector({
+	key: "visibleColumns",
+	get: () => 64,
+});
+
+export const columnOffset = atom({
+	key: "columnOffset",
+	default: 0,
+});
+
 // Atom used to invalidate data when a reload is requested.
 const reloadGeneration = atom({
 	key: "reloadGeneration",
