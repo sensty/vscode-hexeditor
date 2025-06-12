@@ -2,7 +2,7 @@
 // Licensed under the MIT license
 
 import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useRecoilValue, useSetRecoilState, useRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { HexDecorator } from "../../shared/decorators";
 import { EditRangeOp, HexDocumentEditOp } from "../../shared/hexDocumentModel";
 import {
@@ -120,9 +120,6 @@ export const DataDisplay: React.FC = () => {
 	const setOffset = useSetRecoilState(select.offset);
 	const setScrollBounds = useSetRecoilState(select.scrollBounds);
 	const columnWidth = useRecoilValue(select.columnWidth);
-	const showDecodedText = useRecoilValue(select.showDecodedText);
-	const [columnOffset, setColumnOffset] = useRecoilState(select.columnOffset);
-	const visibleColumns = useRecoilValue(select.visibleColumns);
 	const dimensions = useRecoilValue(select.dimensions);
 	const fileSize = useRecoilValue(select.fileSize);
 	const copyType = useRecoilValue(select.copyType);
@@ -140,33 +137,6 @@ export const DataDisplay: React.FC = () => {
 		window.addEventListener("mouseup", l, { passive: true });
 		return () => window.removeEventListener("mouseup", l);
 	}, []);
-
-	useEffect(() => {
-		const el = containerRef.current;
-		if (!el) {
-			return;
-		}
-		const colPx = dimensions.rowPxHeight * (showDecodedText ? 1 + textCellWidth : 1);
-		const onScroll = () => {
-			const newOffset = Math.floor(el.scrollLeft / colPx);
-			const maxOffset = Math.max(0, columnWidth - visibleColumns);
-			setColumnOffset(Math.max(0, Math.min(newOffset, maxOffset)));
-		};
-		el.addEventListener("scroll", onScroll);
-		return () => el.removeEventListener("scroll", onScroll);
-	}, [dimensions, columnWidth, visibleColumns, showDecodedText]);
-
-	useEffect(() => {
-		const el = containerRef.current;
-		if (!el) {
-			return;
-		}
-		const colPx = dimensions.rowPxHeight * (showDecodedText ? 1 + textCellWidth : 1);
-		const desired = columnOffset * colPx;
-		if (Math.abs(el.scrollLeft - desired) > 1) {
-			el.scrollLeft = desired;
-		}
-	}, [columnOffset, dimensions, showDecodedText]);
 
 	// When the focused byte changes, make sure it's in view
 	useEffect(() => {

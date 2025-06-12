@@ -42,9 +42,13 @@ export const HorizontalScrollContainer: React.FC<{ className?: string }> = ({
 		}
 	}, [colOffset, colPx]);
 
+	const width = columnWidth * colPx;
+
 	return (
 		<div ref={ref} className={clsx(style.wrapper, className)}>
-			<div className={style.inner}>{children}</div>
+			<div className={style.inner} style={{ width }}>
+				{children}
+			</div>
 		</div>
 	);
 };

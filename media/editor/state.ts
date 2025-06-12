@@ -200,15 +200,9 @@ export const showDecodedText = selector({
 	get: ({ get }) => get(editorSettings).showDecodedText,
 });
 
-export const getDisplayedColumns = (d: IDimensions, showText: boolean): number => {
-	const perCol = d.rowPxHeight * (showText ? 1 + 0.7 : 1);
-	const usable = Math.max(0, d.width - d.rowPxHeight * 10);
-	return Math.max(1, Math.floor(usable / perCol));
-};
-
 export const visibleColumns = selector({
 	key: "visibleColumns",
-	get: ({ get }) => getDisplayedColumns(get(dimensions), get(showDecodedText)),
+	get: () => 64,
 });
 
 export const columnOffset = atom({
